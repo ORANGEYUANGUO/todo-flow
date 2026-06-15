@@ -1,0 +1,38 @@
+{
+  "productName": "Todo Flow",
+  "version": "0.1.0",
+  "identifier": "com.todoflow.app",
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "Todo Flow",
+        "width": 800,
+        "height": 700,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'http://127.0.0.1:5173/*'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      }
+    }
+  },
+  "build": {
+    "devUrl": "http://127.0.0.1:5173"
+  }
+}
