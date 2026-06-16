@@ -255,3 +255,4 @@ cargo clean          # 清理 Rust 编译缓存（在 src-tauri 目录下执行�
 | @tauri-apps/plugin-autostart | ^2 | 开机自启 |
 | @tauri-apps/plugin-notification | ^2 | 系统通知 |
 | @tauri-apps/plugin-shell | ^2 | Shell 命令 |
+| @tauri-apps/plugin-updater | ^2 | 自动更新 |

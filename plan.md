@@ -113,6 +113,13 @@ project2/
 
 ## 更新记录
 
+### 2026-06-16（第四轮 — 待办清理与发布准备）
+- ✅ **MSI 打包**：`Todo Flow_0.1.0_x64_zh-CN.msi` (2.6MB)，`webviewInstallMode: skip` 减小包体积
+- ✅ **tauri-plugin-updater 自动更新**：Rust 插件注册 + 签名密钥 + capabilities 权限 + 前端检查按钮
+- ✅ **错误日志上报**：Rust panic hook + `window.onerror`/`unhandledrejection` → `AppData/com.todoflow.todoflow/error.log`
+- 构建验证：`cargo check` + `npm run build` 通过
+- 推送到 GitHub + Gitee
+
 ### 2026-06-16（第三轮 — 文档完善与发布）
 - 更新 CLAUDE.md：添加项目概述、完善启动命令、标注 debug exe 位置
 - 更新 plan.md：同步所有已完成项状态，清理过时内容
