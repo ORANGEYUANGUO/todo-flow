@@ -19,7 +19,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": "msi",
     "icon": [
       "icons/128x128.png",
       "icons/128x128@2x.png",
@@ -27,11 +27,10 @@
     ],
     "windows": {
       "webviewInstallMode": {
-        "type": "embedBootstrapper"
+        "type": "skip"
       },
       "wix": {
-        "language": "zh-CN",
-        "template": "src/install.wxs"
+        "language": "zh-CN"
       }
     }
   },

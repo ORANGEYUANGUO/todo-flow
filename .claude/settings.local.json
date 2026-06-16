@@ -19,7 +19,23 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npx tauri *)",
+      "Bash(export HTTPS_PROXY=http://127.0.0.1:7890)",
+      "Bash(export HTTP_PROXY=http://127.0.0.1:7890)",
+      "Bash(cd \"D:/agent/Claude/project2\")",
+      "Bash(export TMP=\"D:/agent/Claude/project2/.tmp\")",
+      "Bash(export TEMP=\"D:/agent/Claude/project2/.tmp\")",
+      "Bash(export TMPDIR=\"D:/agent/Claude/project2/.tmp\")",
+      "Bash(where makensis *)",
+      "Bash(find /c/Users/Guosj_ -maxdepth 5 -name \"nsis*\" -type d 2>/dev/null | head -5; find /c/Users/Guosj_ -maxdepth 5 -name \"wix*\" -type d 2>/dev/null | head -5; find /c/Users/Guosj_/AppData -maxdepth 6 -name \"nsis*\" -type d 2>/dev/null | head -5)",
+      "Bash(cmd.exe /c start \"\" \"D:\\\\\\\\agent\\\\\\\\Claude\\\\\\\\project2\\\\\\\\src-tauri\\\\\\\\target\\\\\\\\release\\\\\\\\todo-flow.exe\")",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "Bash(gh release *)",
+      "Bash(where wix *)",
+      "Bash(where candle *)",
+      "Bash(cd \"D:/agent/Claude/project2/src-tauri\" && find /c/Users -maxdepth 6 -name \"makensis*\" -type f 2>/dev/null | head -5)"
     ]
   }
 }
