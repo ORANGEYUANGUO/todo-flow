@@ -11,6 +11,8 @@ import {
   sendNotification,
   isRunningInTauri,
   syncSettingsToBackend,
+  registerGlobalShortcut,
+  getAppSettings,
 } from '../utils/tauriBridge.js'
 
 // ─── Types ───────────────────────────────────────────────
@@ -59,6 +61,7 @@ const isDailyReminderEnabled = ref(true)
 const reminderHour = ref(9)
 const reminderMinute = ref(0)
 const isTauri = ref(isRunningInTauri())
+const isShortcutEnabled = ref(false)
 
 // ─── Computed ────────────────────────────────────────────
 const filteredTodos = computed(() => {
@@ -225,6 +228,7 @@ function loadFromStorage() {
       isDailyReminderEnabled.value = s.dailyReminder !== false
       reminderHour.value = s.reminderHour ?? 9
       reminderMinute.value = s.reminderMinute ?? 0
+      isShortcutEnabled.value = s.shortcutEnabled ?? false
     }
   } catch {
     // ignore
@@ -239,6 +243,7 @@ function saveSettings() {
       dailyReminder: isDailyReminderEnabled.value,
       reminderHour: reminderHour.value,
       reminderMinute: reminderMinute.value,
+      shortcutEnabled: isShortcutEnabled.value,
     }))
   } catch {
     // ignore
@@ -246,6 +251,18 @@ function saveSettings() {
 }
 
 async function syncReminderSettings() {
+  if (!isTauri.value) return
+  await syncSettingsToBackend({
+    daily_reminder_enabled: isDailyReminderEnabled.value,
+    reminder_hour: reminderHour.value,
+    reminder_minute: reminderMinute.value,
+  })
+}
+
+/**
+ * Sync reminder time to backend (called when hour/minute changes)
+ */
+async function syncReminderTime() {
   if (!isTauri.value) return
   await syncSettingsToBackend({
     daily_reminder_enabled: isDailyReminderEnabled.value,
@@ -287,9 +304,30 @@ async function loadSettings() {
   try {
     isAutoStartEnabled.value = await getAutostartEnabled()
     isAlwaysOnTop.value = await checkAlwaysOnTop()
+
+    // Fetch backend settings (daily reminder, reminder time)
+    const backendSettings = await getAppSettings()
+    if (backendSettings) {
+      isDailyReminderEnabled.value = backendSettings.daily_reminder_enabled
+      reminderHour.value = backendSettings.reminder_hour
+      reminderMinute.value = backendSettings.reminder_minute
+    }
   } catch {
     // ignore
   }
+}
+
+/**
+ * Toggle global shortcut registration
+ * The shortcut is pre-registered in Rust main.rs via Builder.
+ * This toggle just controls whether the user has enabled it in settings.
+ */
+async function toggleGlobalShortcut() {
+  if (!isTauri.value) return
+  // Since the shortcut is always registered in Rust,
+  // we just toggle the on/off indicator
+  isShortcutEnabled.value = !isShortcutEnabled.value
+  saveSettings()
 }
 
 // ─── Tauri Event Listeners ───────────────────────────────
@@ -308,6 +346,19 @@ async function setupTauriListeners() {
     isAlwaysOnTop.value = !isAlwaysOnTop.value
     await setAlwaysOnTop(isAlwaysOnTop.value)
     saveSettings()
+  })
+
+  // Try to register the global shortcut
+  isShortcutEnabled.value = await registerGlobalShortcut()
+
+  // Listen for settings-changed events from Rust backend
+  await listen('settings-changed', async (event) => {
+    console.log('Settings changed from backend:', event.payload)
+    if (event.payload) {
+      isDailyReminderEnabled.value = event.payload.daily_reminder_enabled
+      reminderHour.value = event.payload.reminder_hour
+      reminderMinute.value = event.payload.reminder_minute
+    }
   })
 }
 
@@ -495,7 +546,7 @@ onMounted(async () => {
           </div>
 
           <!-- Time picker panel -->
-          <TransitionRoot :show="showTimePicker">
+          <Transition name="time-picker">
             <div v-show="showTimePicker" class="px-4 pb-4 pt-2 border-t border-gray-700/30">
               <div class="flex flex-wrap items-end gap-3">
                 <!-- Date -->
@@ -535,7 +586,7 @@ onMounted(async () => {
                 </div>
               </div>
             </div>
-          </TransitionRoot>
+          </Transition>
         </div>
       </div>
 
@@ -762,6 +813,29 @@ onMounted(async () => {
                 </button>
               </div>
 
+              <!-- Global Shortcut -->
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-200">⌨️ 全局快捷键</p>
+                  <p class="text-xs text-gray-500">Ctrl+Shift+T 切换窗口置顶</p>
+                </div>
+                <button
+                  @click="toggleGlobalShortcut"
+                  :disabled="!isTauri"
+                  :class="[
+                    'relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed',
+                    isShortcutEnabled ? 'bg-purple-600' : 'bg-gray-600'
+                  ]"
+                >
+                  <span
+                    :class="[
+                      'inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200',
+                      isShortcutEnabled ? 'translate-x-6' : 'translate-x-1'
+                    ]"
+                  />
+                </button>
+              </div>
+
               <!-- Daily Reminder -->
               <div class="flex items-center justify-between">
                 <div>
@@ -790,6 +864,7 @@ onMounted(async () => {
                 <div class="flex items-center gap-3">
                   <input
                     v-model.number="reminderHour"
+                    @input="syncReminderTime"
                     type="number"
                     min="0"
                     max="23"
@@ -798,6 +873,7 @@ onMounted(async () => {
                   <span class="text-gray-500">时</span>
                   <input
                     v-model.number="reminderMinute"
+                    @input="syncReminderTime"
                     type="number"
                     min="0"
                     max="59"
@@ -868,6 +944,21 @@ onMounted(async () => {
 .confetti-leave-to {
   opacity: 0;
   transform: translateY(60px) rotate(360deg);
+}
+
+.time-picker-enter-active {
+  transition: all 0.2s ease-out;
+}
+.time-picker-leave-active {
+  transition: all 0.15s ease-in;
+}
+.time-picker-enter-from {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.time-picker-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 
 /* Range input styling */

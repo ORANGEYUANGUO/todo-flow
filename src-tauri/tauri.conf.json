@@ -1,9 +1,8 @@
 {
   "productName": "Todo Flow",
   "version": "0.1.0",
-  "identifier": "com.todoflow.app",
+  "identifier": "com.todoflow.todoflow",
   "app": {
-    "withGlobalTauri": true,
     "windows": [
       {
         "title": "Todo Flow",
@@ -15,7 +14,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'http://127.0.0.1:5173/*'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'"
+      "csp": null
     }
   },
   "bundle": {
@@ -29,6 +28,10 @@
     "windows": {
       "webviewInstallMode": {
         "type": "embedBootstrapper"
+      },
+      "wix": {
+        "language": "zh-CN",
+        "template": "src/install.wxs"
       }
     }
   },

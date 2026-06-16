@@ -5,6 +5,14 @@ description: 项目代码生成规范、最佳实践和技术约定
 
 # Todo Flow - 代码规范与最佳实践
 
+## 项目概述
+
+Todo Flow 是一个基于 Vue 3 + Tauri 2 的 Windows 桌面待办事项应用，支持优先级管理、分类标签、定时提醒、系统托盘常驻、开机自启、窗口置顶、全局快捷键等功能。浏览器环境下可优雅降级运行。
+
+## 交流语言
+
+- **请使用中文与我交流**，包括代码注释、界面文案、回复说明
+
 ## 总体原则
 
 1. **渐进增强** - 所有 Tauri 功能必须能在浏览器中优雅降级
@@ -177,26 +185,62 @@ if let Err(e) = some_operation() {
 
 ## 已知问题
 
-1. **Tauri dev 模式连接稳定性** — Tauri WebView2 连接 Vite dev server 偶尔不稳定。临时方案：先启动 Vite (`npm run dev`)，再启动 Tauri (`npx tauri dev`)。根本解决：使用 `npx tauri build` + `npx tauri dev` 模式（直接用构建产物）。
+1. ~~**Tauri dev 模式连接稳定性**~~ — 已通过 `start-server-and-test` 解决。使用 `npm run dev:tauri` 一键启动即可。
+
+## 交流规范
+
+- 每次宣布操作成功时，附带证据文件链接
+
+## 代码风格
+
+- 使用 ES 模块（import / export）语法，而不是 CommonJS（require）
+- 尽可能使用解构导入，例如 `import { foo } from 'bar'`
+- 用中文注释
+
+## 工作流程
+
+- 在完成一系列代码更改后，务必进行类型检查
+- 为了性能考虑，优先运行单个测试，而不是整个测试套件
+
+## 代理配置
+
+- 代理服务端口：**7890**
+
+## Bash 命令
+
+```bash
+npm run build        # 构建项目
+npm run typecheck    # 运行类型检查器
+```
 
 ## 构建与测试命令
 
 ```bash
 # 前端开发
-npm run dev          # 启动 Vite 开发服务器（浏览器）
-npm run build        # 生产构建
-npm run preview      # 预览构建产物
+npm run dev          # 启动 Vite 开发服务器（浏览器模式）
+npm run build        # 前端生产构建
+npm run preview      # 预览前端构建产物
 
-# Tauri 开发（需要 Rust 环境）
-# 先启动 Vite，再运行：
-npx tauri dev        # 启动桌面应用
+# Tauri 桌面开发（核心命令）
+npm run dev:tauri     # 【推荐】一键启动：自动先启动 Vite，再启动 Tauri 桌面窗口
+
+# 手动两步启动（备选方案）：
+# 终端 1：启动 Vite
+npm run dev
+# 终端 2：启动 Tauri
+npx tauri dev
 
 # 生产构建
-npx tauri build      # 桌面应用生产构建（生成 .msi/.exe）
+npx tauri build      # 桌面应用完整构建（生成 .msi 安装包到 src-tauri/target/release/bundle/）
+
+# Debug exe 位置（开发模式自动生成）
+# src-tauri/target/debug/todo-flow.exe  — 可直接双击运行，无需 Vite
+# 注意：debug exe 依赖 WebView2 运行时，需确保系统已安装
 
 # 清理
 rm -rf node_modules  # 删除依赖
-rm -rf dist          # 删除构建产物
+rm -rf dist          # 删除前端构建产物
+cargo clean          # 清理 Rust 编译缓存（在 src-tauri 目录下执行）
 ```
 
 ## 依赖版本

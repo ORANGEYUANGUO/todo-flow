@@ -1,9 +1,10 @@
 // Tauri 2.0 Entry Point
-// Handles: system tray, auto-start, daily notification scheduling, close-to-tray
+// Handles: system tray, auto-start, daily notification scheduling, close-to-tray, global shortcut
 
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::TrayIconBuilder;
 use tauri_plugin_autostart::{MacosLauncher, ManagerExt};
+use tauri_plugin_global_shortcut::{Code, Modifiers, Shortcut, ShortcutState};
 use tauri_plugin_notification::NotificationExt;
 use tauri::Emitter;
 use tauri::Manager;
@@ -64,9 +65,11 @@ fn sleep_until(hour: u32, minute: u32) -> Duration {
 
 /// Command to update settings from frontend
 #[tauri::command]
-fn update_app_settings(settings: AppSettings) {
+fn update_app_settings(settings: AppSettings, app: tauri::AppHandle) {
     update_settings(settings.clone());
     println!("Settings updated: {:?}", settings);
+    // Notify frontend that settings changed
+    let _ = app.emit("settings-changed", &settings);
 }
 
 /// Command to get current settings from frontend
@@ -83,6 +86,18 @@ fn main() {
             Some(vec!["--flag"]),
         ))
         .plugin(tauri_plugin_notification::init())
+        .plugin(
+            tauri_plugin_global_shortcut::Builder::new()
+                .with_shortcut(Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyT))
+                    .expect("Failed to parse shortcut")
+                .with_handler(|app, _shortcut, event| {
+                    if event.state == ShortcutState::Pressed {
+                        println!("Global shortcut triggered: toggle always-on-top");
+                        app.emit("always-on-top-toggle", ()).expect("Failed to emit shortcut event");
+                    }
+                })
+                .build(),
+        )
         .invoke_handler(tauri::generate_handler![update_app_settings, get_app_settings])
         .setup(|app| {
             // Enable auto-start by default

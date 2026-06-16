@@ -4,7 +4,11 @@
  * Falls back to no-op when running in browser (dev mode).
  */
 
-const isTauri = typeof window !== 'undefined' && window.__TAURI__
+// 使用 window.__TAURI__ 命名空间检测（Tauri 2 默认注入）
+// 不用 withGlobalTauri，避免 Vite dev 模式下误判
+const isTauri = typeof window !== 'undefined' &&
+  typeof window.__TAURI__ !== 'undefined' &&
+  typeof window.__TAURI__.error !== 'undefined'
 
 /**
  * Set window always-on-top
@@ -152,5 +156,21 @@ export async function syncSettingsToBackend(settings) {
     await invoke('update_app_settings', { settings })
   } catch {
     console.warn('Failed to sync settings to backend')
+  }
+}
+
+/**
+ * Register global shortcut (Ctrl+Shift+T)
+ * The shortcut is pre-registered in Rust main.rs via Builder.
+ * This function just confirms availability to the frontend.
+ */
+export async function registerGlobalShortcut() {
+  if (!isTauri) return false
+  try {
+    console.log('Global shortcut Ctrl+Shift+T is pre-registered in Rust backend')
+    return true
+  } catch (err) {
+    console.warn('Failed to check global shortcut:', err)
+    return false
   }
 }

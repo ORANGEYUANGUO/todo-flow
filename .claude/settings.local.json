@@ -6,7 +6,17 @@
       "Bash(curl -L -o icons/icon.ico \"https://raw.githubusercontent.com/tauri-apps/tauri/dev/tauripr/src-tauri/icons/icon.ico\")",
       "Bash(powershell -Command '$PSVersionTable.PSVersion')",
       "Bash(node *)",
-      "Bash(cargo *)"
+      "Bash(cargo *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:5173/)",
+      "Bash(curl -s http://127.0.0.1:5173/)",
+      "Bash(npm install *)",
+      "Bash(npx vite *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //F //PID 51944)",
+      "Bash(cmd.exe /c start \"\" \"D:\\\\\\\\agent\\\\\\\\Claude\\\\\\\\project2\\\\\\\\src-tauri\\\\\\\\target\\\\\\\\debug\\\\\\\\todo-flow.exe\")",
+      "Bash(git add *)"
     ]
   }
 }
