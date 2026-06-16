@@ -16,7 +16,10 @@
       "Bash(netstat -ano)",
       "Bash(taskkill //F //PID 51944)",
       "Bash(cmd.exe /c start \"\" \"D:\\\\\\\\agent\\\\\\\\Claude\\\\\\\\project2\\\\\\\\src-tauri\\\\\\\\target\\\\\\\\debug\\\\\\\\todo-flow.exe\")",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git commit *)"
     ]
   }
 }
