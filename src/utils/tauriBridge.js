@@ -174,3 +174,43 @@ export async function registerGlobalShortcut() {
     return false
   }
 }
+
+/**
+ * 检查应用更新
+ * @returns {{ available: boolean, version?: string, body?: string }} 更新信息
+ */
+export async function checkUpdate() {
+  if (!isTauri) return { available: false }
+  try {
+    const { check } = await import('@tauri-apps/plugin-updater')
+    const update = await check()
+    if (update) {
+      return {
+        available: true,
+        version: update.version,
+        body: update.body,
+        raw: update,
+      }
+    }
+    return { available: false }
+  } catch (err) {
+    console.warn('检查更新失败:', err)
+    return { available: false, error: err.message }
+  }
+}
+
+/**
+ * 安装更新
+ * @param {object} updateRaw - checkUpdate 返回的 raw 对象
+ */
+export async function installUpdate(updateRaw) {
+  if (!isTauri || !updateRaw) return false
+  try {
+    const { install } = await import('@tauri-apps/plugin-updater')
+    await install(updateRaw)
+    return true
+  } catch (err) {
+    console.warn('安装更新失败:', err)
+    return false
+  }
+}

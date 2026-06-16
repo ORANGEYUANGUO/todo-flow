@@ -73,7 +73,7 @@ description: Todo Flow 项目完整计划、技术方案和待办事项
 
 ## 待办事项
 
-- [ ] `npx tauri build` MSI 打包（Rust 编译成功，MSI/NSIS 打包因网络超时需重试）
+- [x] `npx tauri build` MSI 打包 ✅ — `Todo Flow_0.1.0_x64_zh-CN.msi` (2.6MB) 生成成功
 - [ ] 代码签名证书（影响 SmartScreen 信任度）
 - [ ] 接入 `tauri-plugin-updater` 自动更新机制
 - [ ] 错误日志上报

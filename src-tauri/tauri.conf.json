@@ -36,5 +36,17 @@
   },
   "build": {
     "devUrl": "http://127.0.0.1:5173"
+  },
+  "plugins": {
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://github.com/ORANGEYUANGUO/todo-flow/releases/latest/download/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEU5REZBNzI4NDg1QTdFMDEKUldRQmZscElLS2ZmNlliZm5JVmZ0YzU3MjRSQk1kWE8ybTBVQXk4Q2VtZFZyb0w5VGFWRlFlVjIK",
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }

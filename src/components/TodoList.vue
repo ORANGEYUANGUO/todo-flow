@@ -13,6 +13,7 @@ import {
   syncSettingsToBackend,
   registerGlobalShortcut,
   getAppSettings,
+  checkUpdate,
 } from '../utils/tauriBridge.js'
 
 // ─── Types ───────────────────────────────────────────────
@@ -62,6 +63,8 @@ const reminderHour = ref(9)
 const reminderMinute = ref(0)
 const isTauri = ref(isRunningInTauri())
 const isShortcutEnabled = ref(false)
+const checkingUpdate = ref(false)
+const updateStatus = ref('')  // '', 'checking', 'available', 'up-to-date', 'error'
 
 // ─── Computed ────────────────────────────────────────────
 const filteredTodos = computed(() => {
@@ -328,6 +331,24 @@ async function toggleGlobalShortcut() {
   // we just toggle the on/off indicator
   isShortcutEnabled.value = !isShortcutEnabled.value
   saveSettings()
+}
+
+async function checkForUpdate() {
+  if (!isTauri.value) return
+  checkingUpdate.value = true
+  updateStatus.value = 'checking'
+  try {
+    const result = await checkUpdate()
+    if (result.available) {
+      updateStatus.value = 'available'
+    } else {
+      updateStatus.value = 'up-to-date'
+    }
+  } catch {
+    updateStatus.value = 'error'
+  } finally {
+    checkingUpdate.value = false
+  }
 }
 
 // ─── Tauri Event Listeners ───────────────────────────────
@@ -882,6 +903,27 @@ onMounted(async () => {
                   <span class="text-gray-500">分</span>
                 </div>
                 <p class="text-xs text-gray-600">每日 {{ String(reminderHour).padStart(2, '0') }}:{{ String(reminderMinute).padStart(2, '0') }} 提醒</p>
+              </div>
+
+              <!-- 检查更新 -->
+              <div class="flex items-center justify-between pt-2 border-t border-gray-700/30">
+                <div>
+                  <p class="text-sm font-medium text-gray-200">🔄 检查更新</p>
+                  <p class="text-xs text-gray-500">
+                    <template v-if="updateStatus === 'checking'">正在检查...</template>
+                    <template v-else-if="updateStatus === 'available'">发现新版本！</template>
+                    <template v-else-if="updateStatus === 'up-to-date'">已是最新版本</template>
+                    <template v-else-if="updateStatus === 'error'">检查失败</template>
+                    <template v-else>v0.1.0</template>
+                  </p>
+                </div>
+                <button
+                  @click="checkForUpdate"
+                  :disabled="!isTauri || checkingUpdate"
+                  class="text-xs px-3 py-1.5 rounded-lg bg-purple-600/20 text-purple-300 hover:bg-purple-600/40 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  {{ checkingUpdate ? '...' : '检查' }}
+                </button>
               </div>
 
               <!-- Tauri Info -->
