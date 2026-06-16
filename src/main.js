@@ -3,7 +3,19 @@ import './style.css'
 import App from './App.vue'
 
 // Tauri integration
-import { listen, requestNotificationPermission, isRunningInTauri } from './utils/tauriBridge.js'
+import { listen, requestNotificationPermission, isRunningInTauri, logError } from './utils/tauriBridge.js'
+
+// 全局 JS 错误捕获
+window.addEventListener('error', (event) => {
+  const msg = `${event.message} @ ${event.filename}:${event.lineno}:${event.colno}`
+  logError(`[JS] ${msg}`)
+})
+
+// 全局 Promise 拒绝捕获
+window.addEventListener('unhandledrejection', (event) => {
+  const reason = event.reason?.message || event.reason || 'Unknown rejection'
+  logError(`[Promise] ${reason}`)
+})
 
 // 先挂载 Vue 应用，确保界面渲染
 createApp(App).mount('#app')

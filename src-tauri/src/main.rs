@@ -11,6 +11,35 @@ use tauri::Manager;
 use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use std::sync::Mutex;
+use std::fs::OpenOptions;
+use std::io::Write;
+use std::panic;
+
+/// 获取日志文件路径 (用户 AppData 目录下)
+fn get_log_path(app: &tauri::AppHandle) -> std::path::PathBuf {
+    let mut path = app
+        .path()
+        .app_data_dir()
+        .unwrap_or_else(|_| std::path::PathBuf::from("."));
+    std::fs::create_dir_all(&path).ok();
+    path.push("error.log");
+    path
+}
+
+/// 追加写入日志文件
+fn append_to_log(path: &std::path::Path, level: &str, message: &str) {
+    if let Ok(mut file) = OpenOptions::new().create(true).append(true).open(path) {
+        let ts = chrono::Local::now().format("%Y-%m-%d %H:%M:%S");
+        let _ = writeln!(file, "[{}] [{}] {}", ts, level, message);
+    }
+}
+
+/// 前端调用：记录错误日志
+#[tauri::command]
+fn log_error(message: String, app: tauri::AppHandle) {
+    let path = get_log_path(&app);
+    append_to_log(&path, "ERROR", &message);
+}
 
 /// Shared settings between frontend and backend
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -99,8 +128,23 @@ fn main() {
                 })
                 .build(),
         )
-        .invoke_handler(tauri::generate_handler![update_app_settings, get_app_settings])
+        .invoke_handler(tauri::generate_handler![update_app_settings, get_app_settings, log_error])
         .setup(|app| {
+            // 全局 panic hook：未捕获的 panic 写入日志
+            let log_path = get_log_path(&app.handle());
+            panic::set_hook(Box::new(move |info| {
+                let msg = format!(
+                    "Panic: {}",
+                    info.payload()
+                        .downcast_ref::<&str>()
+                        .unwrap_or(&"<unknown>")
+                );
+                if let Some(loc) = info.location() {
+                    append_to_log(&log_path, "PANIC", &format!("{} at {}", msg, loc));
+                } else {
+                    append_to_log(&log_path, "PANIC", &msg);
+                }
+            }));
             // Enable auto-start by default
             let manager = app.autolaunch();
             if !manager.is_enabled().unwrap_or(false) {

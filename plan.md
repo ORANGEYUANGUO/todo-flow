@@ -75,8 +75,8 @@ description: Todo Flow 项目完整计划、技术方案和待办事项
 
 - [x] `npx tauri build` MSI 打包 ✅ — `Todo Flow_0.1.0_x64_zh-CN.msi` (2.6MB) 生成成功
 - [ ] 代码签名证书（影响 SmartScreen 信任度）
-- [ ] 接入 `tauri-plugin-updater` 自动更新机制
-- [ ] 错误日志上报
+- [x] 接入 `tauri-plugin-updater` 自动更新机制 ✅（密钥、端点已配置，设置面板已添加检查按钮）
+- [x] 错误日志上报 ✅ — Rust panic hook + `window.onerror` → 写入 `%APPDATA%/com.todoflow.todoflow/error.log`
 
 ## 文件结构
 

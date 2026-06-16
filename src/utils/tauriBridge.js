@@ -214,3 +214,20 @@ export async function installUpdate(updateRaw) {
     return false
   }
 }
+
+/**
+ * 记录错误日志到后端文件
+ * @param {string} message - 错误信息
+ */
+export async function logError(message) {
+  if (!isTauri) {
+    console.warn('[ErrorLog]', message)
+    return
+  }
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    await invoke('log_error', { message })
+  } catch (err) {
+    console.warn('记录错误日志失败:', err)
+  }
+}
