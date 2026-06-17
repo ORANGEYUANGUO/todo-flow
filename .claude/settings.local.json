@@ -67,5 +67,30 @@
       "Bash(rmdir target/release/bundle/msi)",
       "Bash(HTTP_PROXY=http://127.0.0.1:7890 npx tauri build)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "CRITICAL: The project CLAUDE.md specifies: \"请使用中文与我交流，包括代码注释、界面文案、回复说明\"。You MUST respond in Chinese (中文) for ALL messages, thinking, code comments, and UI text. This is a hard requirement. Also, when the user invokes a skill via /skill-name or the Skill tool, you MUST follow that skill's process step-by-step without skipping or merging steps. The skill's instructions override your default behavior."
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "检查用户消息中是否包含明确的skill调用 (如 /frontend-design, /code-review 等)。如果包含: 生成一条强制提醒注入到模型上下文: \"USER CALLED A SKILL. You MUST: (1) invoke the Skill tool for the named skill immediately (2) follow the skill's process EXACTLY step by step without skipping any steps (3) do NOT shortcut by writing code directly。The skill's instructions are highest priority for this task。\" 如果不包含skill调用: 不输出任何内容。",
+            "if": "Skill"
+          }
+        ]
+      }
+    ]
   }
 }

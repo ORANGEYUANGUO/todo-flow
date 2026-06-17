@@ -1,6 +1,6 @@
 [package]
 name = "todo-flow"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 rust-version = "1.77"
 description = "A beautiful todo management desktop app for Windows 11"
