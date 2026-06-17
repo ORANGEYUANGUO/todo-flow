@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "notes": "全新 Liquid Light 浅色主题 UI 改版",
+  "pub_date": "2026-06-18T00:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/ORANGEYUANGUO/todo-flow/releases/download/v0.2.0/Todo.Flow_0.2.0_x64-setup.exe"
+    }
+  }
+}
