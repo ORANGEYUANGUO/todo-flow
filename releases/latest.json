@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0",
+  "notes": "Todo Flow 首次发布 - 优先级管理、分类标签、定时提醒、系统托盘、开机自启、窗口置顶、全局快捷键、数据备份等功能",
+  "pub_date": "2026-06-17T19:15:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/ORANGEYUANGUO/todo-flow/releases/download/v0.1.0/Todo%20Flow_0.1.0_x64-setup.exe"
+    }
+  }
+}
