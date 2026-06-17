@@ -186,6 +186,8 @@ if let Err(e) = some_operation() {
 ## 已知问题
 
 1. ~~**Tauri dev 模式连接稳定性**~~ — 已通过 `start-server-and-test` 解决。使用 `npm run dev:tauri` 一键启动即可。
+2. **MSI 打包不完整** — WiX 打包器生成的 MSI 缺少 File/Media 表内容，仅包含 exe 引用。NSIS 安装包正常工作。
+3. **首次构建需要代理** — Tauri CLI 从 GitHub 下载 NSIS/WiX 工具时需要代理（`HTTP_PROXY=http://127.0.0.1:7890`）
 
 ## 交流规范
 
@@ -231,11 +233,36 @@ npm run dev
 npx tauri dev
 
 # 生产构建
-npx tauri build      # 桌面应用完整构建（生成 .msi 安装包到 src-tauri/target/release/bundle/）
+npx tauri build      # 桌面应用完整构建（生成 NSIS + MSI 安装包到 src-tauri/target/release/bundle/）
+                       # NSIS: src-tauri/target/release/bundle/nsis/Todo Flow_0.1.0_x64-setup.exe
+                       # MSI:  src-tauri/target/release/bundle/msi/Todo Flow_0.1.0_x64_zh-CN.msi
+                       # 注意：NSIS 安装包可用，MSI 目前存在打包问题（仅包含 exe 引用，无实际文件）
 
 # Debug exe 位置（开发模式自动生成）
 # src-tauri/target/debug/todo-flow.exe  — 可直接双击运行，无需 Vite
 # 注意：debug exe 依赖 WebView2 运行时，需确保系统已安装
+
+# 发布到 GitHub Releases
+# 1. 构建: npx tauri build
+# 2. 上传 NSIS 安装包到 GitHub Releases
+# 3. 生成 latest.json 供 updater 插件使用:
+#    {
+#      "version": "0.1.0",
+#      "notes": "版本说明",
+#      "pub_date": "2026-06-17T00:00:00Z",
+#      "platforms": {
+#        "windows-x86_64": {
+#          "signature": "<签名>",
+#          "url": "https://github.com/ORANGEYUANGUO/todo-flow/releases/download/v0.1.0/Todo%20Flow_0.1.0_x64-setup.exe"
+#        }
+#      }
+#    }
+# 4. 使用 minisign 对安装包签名
+
+# 构建注意事项
+# - 首次构建需要下载 NSIS 和 WiX 工具（需代理: HTTP_PROXY=http://127.0.0.1:7890）
+# - 前端资源通过 build.frontendDist 嵌入到 exe 二进制中
+# - NSIS 安装包是自包含的，用户无需额外环境
 
 # 清理
 rm -rf node_modules  # 删除依赖

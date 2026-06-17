@@ -1,8 +1,28 @@
 {
-  "name": "project2",
+  "name": "todo-flow",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "A beautiful Windows 11 todo desktop app with Vue 3 + Tauri 2",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ORANGEYUANGUO/todo-flow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ORANGEYUANGUO/todo-flow/issues"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "todo",
+    "task",
+    "tauri",
+    "vue",
+    "desktop",
+    "windows",
+    "productivity"
+  ],
   "scripts": {
     "dev": "vite",
     "dev:tauri": "node scripts/start-tauri.mjs",

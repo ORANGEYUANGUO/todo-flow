@@ -14,6 +14,8 @@ use std::sync::Mutex;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::panic;
+use tokio::sync::Notify;
+use std::sync::Arc;
 
 /// 获取日志文件路径 (用户 AppData 目录下)
 fn get_log_path(app: &tauri::AppHandle) -> std::path::PathBuf {
@@ -61,6 +63,8 @@ impl Default for AppSettings {
 
 lazy_static::lazy_static! {
     static ref APP_SETTINGS: Mutex<AppSettings> = Mutex::new(AppSettings::default());
+    /// 设置变更通知器：前台修改设置后通知后台循环立即重算
+    static ref SETTINGS_NOTIFY: Arc<Notify> = Arc::new(Notify::new());
 }
 
 /// Get current settings
@@ -99,6 +103,8 @@ fn update_app_settings(settings: AppSettings, app: tauri::AppHandle) {
     println!("Settings updated: {:?}", settings);
     // Notify frontend that settings changed
     let _ = app.emit("settings-changed", &settings);
+    // 通知后台循环重新计算 sleep 时间
+    SETTINGS_NOTIFY.notify_one();
 }
 
 /// Command to get current settings from frontend
@@ -176,6 +182,7 @@ fn main() {
 
             // Schedule daily notification
             let handle = app.handle().clone();
+            let notify = SETTINGS_NOTIFY.clone();
             tauri::async_runtime::spawn(async move {
                 loop {
                     let settings = get_settings();
@@ -184,19 +191,28 @@ fn main() {
                         "Next daily reminder in {:?}...",
                         delay
                     );
-                    tokio::time::sleep(delay).await;
-                    println!("Firing daily reminder...");
+                    // 使用 select! 使 sleep 能被设置变更中断
+                    tokio::select! {
+                        _ = tokio::time::sleep(delay) => {
+                            println!("Firing daily reminder...");
 
-                    // Only send if reminder is enabled
-                    if settings.daily_reminder_enabled {
-                        handle.emit("daily-reminder", ()).unwrap();
-                        handle
-                            .notification()
-                            .builder()
-                            .title("Todo Flow")
-                            .body("今天还没有安排任务吗？打开 Todo Flow 规划一下吧！")
-                            .show()
-                            .unwrap();
+                            // Only send if reminder is enabled
+                            let current_settings = get_settings();
+                            if current_settings.daily_reminder_enabled {
+                                handle.emit("daily-reminder", ()).unwrap();
+                                handle
+                                    .notification()
+                                    .builder()
+                                    .title("Todo Flow")
+                                    .body("今天还没有安排任务吗？打开 Todo Flow 规划一下吧！")
+                                    .show()
+                                    .unwrap();
+                            }
+                        }
+                        _ = notify.notified() => {
+                            println!("Settings changed, recalculating reminder time...");
+                            // 循环回到顶部，用新设置重新计算 delay
+                        }
                     }
                 }
             });

@@ -87,10 +87,18 @@ npx tauri build
 ## 项目结构
 
 ```
-project2/
+todo-flow/
 ├── src/                    # 前端源码
 │   ├── components/
-│   │   └── TodoList.vue    # 主组件（含设置面板）
+│   │   ├── TodoList.vue    # 主组件（组合层）
+│   │   ├── TodoInput.vue   # 输入区域
+│   │   ├── TodoItem.vue    # 单个任务条目
+│   │   ├── TodoStats.vue   # 统计进度条
+│   │   ├── TodoFilters.vue # 筛选排序栏
+│   │   └── SettingsPanel.vue # 设置面板
+│   ├── composables/
+│   │   ├── useTodos.js     # Todo 数据逻辑
+│   │   └── useSettings.js  # 设置与 Tauri 交互
 │   ├── utils/
 │   │   └── tauriBridge.js  # Tauri API 安全封装
 │   ├── App.vue             # 根组件
@@ -108,7 +116,7 @@ project2/
 ├── package.json            # npm 配置
 ├── index.html              # HTML 入口
 ├── CLAUDE.md               # 代码规范与最佳实践
-├── plan.md                 # 项目计划与技术文档
+├── CHANGELOG.md            # 版本变更记录
 └── README.md               # 项目说明（本文件）
 ```
 
@@ -122,3 +130,17 @@ project2/
 ## 许可证
 
 MIT
+
+## 常见问题
+
+### Q: 桌面版打不开或闪退？
+A: 请确认系统已安装 WebView2。Win11 已内置，Win10 可从 [Microsoft 官网](https://developer.microsoft.com/microsoft-edge/webview2/) 下载。
+
+### Q: MSI 安装包有问题？
+A: 当前版本的 MSI 安装包因 Tauri 2 WiX 集成问题可能缺少文件。建议使用 NSIS 安装包（`Todo Flow_0.1.0_x64-setup.exe`），功能完整。
+
+### Q: 自动更新失败？
+A: 自动更新需要发布 `latest.json` 到 GitHub Releases。首次使用或从源码构建的版本尚未配置更新端点，不会自动更新。
+
+### Q: 如何备份数据？
+A: 打开设置面板，点击"数据管理"中的"导出"按钮，可导出 JSON 备份文件。换机时通过"导入"恢复。

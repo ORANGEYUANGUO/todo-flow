@@ -8,6 +8,7 @@ node_modules
 src-tauri/target
 src-tauri/target-arm64
 src-tauri/update-key.key
+src-tauri/target/release/bundle
 
 # Editor
 .vscode/*
@@ -33,3 +34,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+
+# Temp files
+.tmp/
+*.tgz
+
+# Environment
+.env

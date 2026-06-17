@@ -19,15 +19,16 @@
   },
   "bundle": {
     "active": true,
-    "targets": "msi",
+    "targets": ["msi", "nsis"],
     "icon": [
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.ico"
     ],
+    "useLocalToolsDir": true,
     "windows": {
       "webviewInstallMode": {
-        "type": "skip"
+        "type": "downloadBootstrapper"
       },
       "wix": {
         "language": "zh-CN"
@@ -35,7 +36,8 @@
     }
   },
   "build": {
-    "devUrl": "http://127.0.0.1:5173"
+    "devUrl": "http://127.0.0.1:5173",
+    "frontendDist": "../dist"
   },
   "plugins": {
     "updater": {
