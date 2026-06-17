@@ -58,7 +58,7 @@
 | Node.js | 18+ | 前端运行时 |
 | Rust | 1.77+ | 桌面应用后端编译 |
 | Windows | 10/11 | 桌面应用运行平台 |
-| WebView2 | 系统自带 | Win11 已内置，Win10 需安装 |
+| WebView2 | 系统自带 | Win11 已内置，Win10 1809+ 已预装 |
 
 ### 安装依赖
 
@@ -79,9 +79,10 @@ npm install
 ### 生产构建
 
 ```bash
-# 桌面应用 MSI 安装包
+# NSIS 安装包（推荐）
 npx tauri build
-# 产物位置：src-tauri/target/release/bundle/msi/
+# 产物位置：src-tauri/target/release/bundle/nsis/Todo Flow_0.1.0_x64-setup.exe
+# 安装包约 2.6MB，WebView2 由系统自带
 ```
 
 ## 项目结构
@@ -134,10 +135,7 @@ MIT
 ## 常见问题
 
 ### Q: 桌面版打不开或闪退？
-A: 请确认系统已安装 WebView2。Win11 已内置，Win10 可从 [Microsoft 官网](https://developer.microsoft.com/microsoft-edge/webview2/) 下载。
-
-### Q: MSI 安装包有问题？
-A: 当前版本的 MSI 安装包因 Tauri 2 WiX 集成问题可能缺少文件。建议使用 NSIS 安装包（`Todo Flow_0.1.0_x64-setup.exe`），功能完整。
+A: 请确认系统已安装 WebView2。Win11 已内置，Win10（1809 及之后版本）也已预装。可从 [Microsoft 官网](https://developer.microsoft.com/microsoft-edge/webview2/) 下载。
 
 ### Q: 自动更新失败？
 A: 自动更新需要发布 `latest.json` 到 GitHub Releases。首次使用或从源码构建的版本尚未配置更新端点，不会自动更新。

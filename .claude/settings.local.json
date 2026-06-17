@@ -61,7 +61,11 @@
       "Bash(rm -rf \"D:/agent/Claude/project2/.tmp/check_msi*.ps1\" \"D:/agent/Claude/project2/.tmp/test_nsis*.ps1\" \"D:/agent/Claude/project2/.tmp/install_*.ps1\" \"D:/agent/Claude/project2/.tmp/final_verify.ps1\" \"D:/agent/Claude/project2/.tmp/msi_install.log\")",
       "Bash(mkdir -p \"D:/agent/Claude/project2/.claude/skills/claude-daily-report\")",
       "Bash(xargs -I{} stat --format='%Y %n' {})",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Bash(rm -rf target/release/bundle/nsis)",
+      "Bash(rm -rf target/release/bundle/msi/*)",
+      "Bash(rmdir target/release/bundle/msi)",
+      "Bash(HTTP_PROXY=http://127.0.0.1:7890 npx tauri build)"
     ]
   }
 }

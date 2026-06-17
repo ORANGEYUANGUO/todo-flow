@@ -27,5 +27,4 @@ All notable changes to Todo Flow will be documented in this file.
 - **代码规范文档**: CLAUDE.md 完整编码规范
 
 ### Known Issues
-- MSI 安装包为空壳，Tauri 2 WiX 打包器未能正确压缩文件到 CAB
 - 无代码签名证书，Windows SmartScreen 会显示"未知发布者"警告

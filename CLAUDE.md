@@ -185,9 +185,9 @@ if let Err(e) = some_operation() {
 
 ## 已知问题
 
-1. ~~**Tauri dev 模式连接稳定性**~~ — 已通过 `start-server-and-test` 解决。使用 `npm run dev:tauri` 一键启动即可。
-2. **MSI 打包不完整** — WiX 打包器生成的 MSI 缺少 File/Media 表内容，仅包含 exe 引用。NSIS 安装包正常工作。
-3. **首次构建需要代理** — Tauri CLI 从 GitHub 下载 NSIS/WiX 工具时需要代理（`HTTP_PROXY=http://127.0.0.1:7890`）
+1. ~~**Tauri dev 模式连接稳定性**~~ — 已通过 `start-tauri.mjs` 解决。使用 `npm run dev:tauri` 一键启动即可。
+2. ~~**MSI 打包不完整**~~ — 已移除 MSI 打包，仅使用 NSIS 安装包。
+3. **首次构建需要代理** — Tauri CLI 从 GitHub 下载 NSIS 工具时需要代理（`HTTP_PROXY=http://127.0.0.1:7890`）
 
 ## 交流规范
 
@@ -201,8 +201,7 @@ if let Err(e) = some_operation() {
 
 ## 工作流程
 
-- 在完成一系列代码更改后，务必进行类型检查
-- 为了性能考虑，优先运行单个测试，而不是整个测试套件
+- 在完成一系列代码更改后，运行 `npm run build` 验证构建
 
 ## 代理配置
 
@@ -211,8 +210,7 @@ if let Err(e) = some_operation() {
 ## Bash 命令
 
 ```bash
-npm run build        # 构建项目
-npm run typecheck    # 运行类型检查器
+npm run build        # 构建项目（前端 + Tauri NSIS 安装包）
 ```
 
 ## 构建与测试命令
@@ -233,10 +231,9 @@ npm run dev
 npx tauri dev
 
 # 生产构建
-npx tauri build      # 桌面应用完整构建（生成 NSIS + MSI 安装包到 src-tauri/target/release/bundle/）
+npx tauri build      # 桌面应用完整构建（生成 NSIS 安装包）
                        # NSIS: src-tauri/target/release/bundle/nsis/Todo Flow_0.1.0_x64-setup.exe
-                       # MSI:  src-tauri/target/release/bundle/msi/Todo Flow_0.1.0_x64_zh-CN.msi
-                       # 注意：NSIS 安装包可用，MSI 目前存在打包问题（仅包含 exe 引用，无实际文件）
+                       # 安装包约 2.6MB，WebView2 由系统自带，无需嵌入
 
 # Debug exe 位置（开发模式自动生成）
 # src-tauri/target/debug/todo-flow.exe  — 可直接双击运行，无需 Vite
@@ -252,17 +249,18 @@ npx tauri build      # 桌面应用完整构建（生成 NSIS + MSI 安装包到
 #      "pub_date": "2026-06-17T00:00:00Z",
 #      "platforms": {
 #        "windows-x86_64": {
-#          "signature": "<签名>",
+#          "signature": "",
 #          "url": "https://github.com/ORANGEYUANGUO/todo-flow/releases/download/v0.1.0/Todo%20Flow_0.1.0_x64-setup.exe"
 #        }
 #      }
 #    }
-# 4. 使用 minisign 对安装包签名
+# 4. 上传 latest.json 到 Release 作为附件
 
 # 构建注意事项
-# - 首次构建需要下载 NSIS 和 WiX 工具（需代理: HTTP_PROXY=http://127.0.0.1:7890）
+# - 首次构建需要下载 NSIS 工具（需代理: HTTP_PROXY=http://127.0.0.1:7890）
 # - 前端资源通过 build.frontendDist 嵌入到 exe 二进制中
-# - NSIS 安装包是自包含的，用户无需额外环境
+# - webviewInstallMode: skip — 安装包不含 WebView2，依赖系统自带（Win10 1809+/Win11）
+# - NSIS 安装包约 2.6MB，轻量可用
 
 # 清理
 rm -rf node_modules  # 删除依赖
