@@ -1,6 +1,6 @@
-# ✨ Todo Flow
+# Todo Flow
 
-> 让你的任务像水流一样顺畅
+> 让任务像水流一样顺畅
 
 一个功能丰富的 Windows 桌面待办事项应用，支持优先级管理、分类标签、定时提醒、系统托盘常驻、开机自启、窗口置顶等功能。浏览器环境下可优雅降级运行。
 
@@ -13,15 +13,15 @@
 
 ## 功能特性
 
-### 📋 核心任务管理
+### 核心任务管理
 - **添加/完成/删除** — 基本的待办事项 CRUD 操作
 - **优先级系统** — 无/低/中/高 四级优先级，颜色圆点直观区分
-- **分类标签** — 个人 👤 / 工作 💼 / 学习 📚 / 健康 💪 / 其他 📌
+- **分类标签** — 个人 / 工作 / 学习 / 健康 / 其他
 - **定时计划** — 设置任务计划完成日期和时间
 - **提前提醒** — 任务到期前 5/15/30/60/120 分钟或 1 天提醒
 - **实时进度条** — 完成百分比可视化追踪
 
-### 🖥️ 桌面专属功能（Tauri）
+### 桌面专属功能（Tauri）
 - **系统托盘** — 最小化到系统托盘，右键菜单快速操作
 - **开机自启** — 随 Windows 自动启动，不遗漏任务
 - **每日提醒** — 可自定义每天提醒时间，督促规划任务
@@ -31,11 +31,14 @@
 - **自动更新** — 检查新版本并自动下载安装
 - **错误日志** — 全局 JS 异常 + Rust panic 自动捕获写入本地日志
 
-### 🎨 用户体验
-- 流畅的滑入滑出过渡动画
-- 完成任务时的彩纸庆祝效果
-- 暗色主题，渐变色标题和进度条
-- 自定义滚动条样式，整体视觉统一
+### Liquid Light 浅色主题（v0.2.0）
+- **毛玻璃卡片** — 半透明背景 + `backdrop-filter: blur(8px)` 毛玻璃效果，卡片悬停微微上浮
+- **水滴状态环** — 替代传统 checkbox：空心环 `○` 未完成、蓝色实心 `◉` 已完成（带双层涟漪扩散动画）、红色实心 `●` 高优先级
+- **水位线进度条** — 蓝渐变进度条，带有 shimmer 波光和 waveShift 位移双动画
+- **品牌图标** — 蓝渐变方块内含旋转圆环 + 流光扫过动画
+- **渐变按钮** — 主操作按钮蓝渐变背景 + 流光动画
+- **Google Fonts** — 引入 Inter（界面）+ Noto Sans SC（中文）+ JetBrains Mono（等宽数据）字体
+- **冷调晨空底色** — `#F0F4F8` 灰蓝背景，区别于常见的暖白浅色主题
 
 ## 技术栈
 
@@ -72,16 +75,16 @@ npm install
 
 | 方式 | 命令 | 说明 |
 |------|------|------|
-| 🌐 仅浏览器 | `npm run dev` | 纯前端模式，桌面功能自动降级 |
-| 🖥️ 桌面开发 | `npm run dev:tauri` | **推荐** 一键启动 Vite + Tauri 窗口 |
-| ⚡ 直接运行 | 双击 `src-tauri/target/debug/todo-flow.exe` | debug 编译产物，无需启动 Vite |
+| 仅浏览器 | `npm run dev` | 纯前端模式，桌面功能自动降级 |
+| 桌面开发 | `npm run dev:tauri` | **推荐** 一键启动 Vite + Tauri 窗口 |
+| 直接运行 | 双击 `src-tauri/target/debug/todo-flow.exe` | debug 编译产物，无需启动 Vite |
 
 ### 生产构建
 
 ```bash
 # NSIS 安装包（推荐）
 npx tauri build
-# 产物位置：src-tauri/target/release/bundle/nsis/Todo Flow_0.1.0_x64-setup.exe
+# 产物位置：src-tauri/target/release/bundle/nsis/Todo Flow_0.2.0_x64-setup.exe
 # 安装包约 2.6MB，WebView2 由系统自带
 ```
 
@@ -92,9 +95,9 @@ todo-flow/
 ├── src/                    # 前端源码
 │   ├── components/
 │   │   ├── TodoList.vue    # 主组件（组合层）
-│   │   ├── TodoInput.vue   # 输入区域
-│   │   ├── TodoItem.vue    # 单个任务条目
-│   │   ├── TodoStats.vue   # 统计进度条
+│   │   ├── TodoInput.vue   # 毛玻璃输入区
+│   │   ├── TodoItem.vue    # 水滴状态环条目
+│   │   ├── TodoStats.vue   # 水位线进度条
 │   │   ├── TodoFilters.vue # 筛选排序栏
 │   │   └── SettingsPanel.vue # 设置面板
 │   ├── composables/
@@ -115,11 +118,15 @@ todo-flow/
 │   └── start-tauri.mjs     # 一键启动脚本
 ├── vite.config.js          # Vite 构建配置
 ├── package.json            # npm 配置
-├── index.html              # HTML 入口
+├── index.html              # HTML 入口（含 Google Fonts）
 ├── CLAUDE.md               # 代码规范与最佳实践
 ├── CHANGELOG.md            # 版本变更记录
 └── README.md               # 项目说明（本文件）
 ```
+
+## 版本历史
+
+参见 [CHANGELOG.md](CHANGELOG.md)
 
 ## 仓库地址
 
@@ -128,17 +135,17 @@ todo-flow/
 | GitHub | https://github.com/ORANGEYUANGUO/todo-flow |
 | Gitee | https://gitee.com/Guoyuan_shu/todo-flow |
 
+## 常见问题
+
+### 桌面版打不开或闪退？
+请确认系统已安装 WebView2。Win11 已内置，Win10（1809 及之后版本）也已预装。可从 [Microsoft 官网](https://developer.microsoft.com/microsoft-edge/webview2/) 下载。
+
+### 自动更新失败？
+自动更新需要发布 `latest.json` 到 GitHub Releases。首次使用或从源码构建的版本尚未配置更新端点，不会自动更新。
+
+### 如何备份数据？
+打开设置面板，点击"数据管理"中的"导出"按钮，可导出 JSON 备份文件。换机时通过"导入"恢复。
+
 ## 许可证
 
 MIT
-
-## 常见问题
-
-### Q: 桌面版打不开或闪退？
-A: 请确认系统已安装 WebView2。Win11 已内置，Win10（1809 及之后版本）也已预装。可从 [Microsoft 官网](https://developer.microsoft.com/microsoft-edge/webview2/) 下载。
-
-### Q: 自动更新失败？
-A: 自动更新需要发布 `latest.json` 到 GitHub Releases。首次使用或从源码构建的版本尚未配置更新端点，不会自动更新。
-
-### Q: 如何备份数据？
-A: 打开设置面板，点击"数据管理"中的"导出"按钮，可导出 JSON 备份文件。换机时通过"导入"恢复。
