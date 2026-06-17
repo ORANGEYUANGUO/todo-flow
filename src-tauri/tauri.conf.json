@@ -19,7 +19,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["msi", "nsis"],
+    "targets": ["nsis"],
     "icon": [
       "icons/128x128.png",
       "icons/128x128@2x.png",
@@ -28,7 +28,7 @@
     "useLocalToolsDir": true,
     "windows": {
       "webviewInstallMode": {
-        "type": "downloadBootstrapper"
+        "type": "skip"
       },
       "wix": {
         "language": "zh-CN"
